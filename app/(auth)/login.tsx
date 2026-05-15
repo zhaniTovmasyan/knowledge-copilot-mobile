@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
-import { router, Href } from "expo-router";
-import api, { setAuthToken } from "../../services/api";
+import { router } from "expo-router";
+import api from "../../services/api";
+import { useAuthStore } from "../../store/authStore";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setToken } = useAuthStore();
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       const response = await api.post("/auth/login", { email, password });
       const token = response.data.AuthenticationResult.AccessToken;
-      setAuthToken(token);
+      await setToken(token);
       router.replace("/");
     } catch (error) {
       Alert.alert("Error", "Invalid email or password");
@@ -51,7 +53,7 @@ export default function LoginScreen() {
           {loading ? "Loading..." : "Sign In"}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push("/(auth)/register" as Href)}>
+      <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
         <Text className="text-center text-[#2E3A8C] text-sm">
           Dont have an account? Sign Up
         </Text>
