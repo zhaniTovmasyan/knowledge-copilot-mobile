@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
-import { Href, router } from "expo-router";
+import { Href, router, useFocusEffect } from "expo-router";
 import api from "../services/api";
 import { useAuthStore } from "../store/authStore";
 
@@ -16,12 +16,14 @@ export default function NotesScreen() {
   const [loading, setLoading] = useState(false);
   const { token, clearToken } = useAuthStore();
 
-  useEffect(() => {
-    if (token) {
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      fetchNotes();
-    }
-  }, [token]);
+  useFocusEffect(
+    useCallback(() => {
+      if (token) {
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        fetchNotes();
+      }
+    }, [token])
+  );
 
   const fetchNotes = async () => {
     try {
