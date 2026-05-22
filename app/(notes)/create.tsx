@@ -29,30 +29,38 @@ export default function CreateNoteScreen() {
   };
 
   return (
-    <View className="flex-1 px-6 pt-6 bg-white">
+    <View className="flex-1 px-6 pt-14 bg-background">
+      <View className="flex-row justify-between items-center mb-6">
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text className="text-accent text-base">‹ Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-accent px-5 py-2 rounded-xl"
+          onPress={handleCreate}
+          disabled={loading}
+        >
+          <Text className="text-background font-bold">
+            {loading ? "..." : "Save"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <TextInput
-        className="text-2xl font-bold mb-4 text-gray-800"
+        className="text-2xl font-bold mb-4 text-text-primary border-b border-border pb-4"
         placeholder="Title"
+        placeholderTextColor="rgba(255,255,255,0.2)"
         value={title}
         onChangeText={setTitle}
       />
       <TextInput
-        className="flex-1 text-base text-gray-600"
+        className="flex-1 text-base text-text-secondary"
         placeholder="Start writing..."
+        placeholderTextColor="rgba(255,255,255,0.2)"
         value={content}
         onChangeText={setContent}
         multiline
         textAlignVertical="top"
       />
-      <TouchableOpacity
-        className="bg-[#2E3A8C] p-4 rounded-xl items-center mb-8"
-        onPress={handleCreate}
-        disabled={loading}
-      >
-        <Text className="text-white text-base font-semibold">
-          {loading ? "Saving..." : "Save Note"}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }

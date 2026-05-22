@@ -14,16 +14,16 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!isReady) return;
-
     if (!isAuthenticated) {
       router.replace("/(auth)/login");
     }
   }, [isReady, isAuthenticated]);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: "Notes" }} />
-      <Stack.Screen name="(notes)/create" options={{ title: "New Note" }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(notes)/create" />
     </Stack>
   );
 }
