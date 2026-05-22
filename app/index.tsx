@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
-import { Href, router, useFocusEffect } from "expo-router";
+import { useState, useCallback } from "react";
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { router, useFocusEffect } from "expo-router";
 import api from "../services/api";
 import { useAuthStore } from "../store/authStore";
 
@@ -43,35 +43,61 @@ export default function NotesScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-background">
       <FlatList
         data={notes}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-4"
+        contentContainerStyle={{ padding: 16, paddingTop: 60 }}
+        ListHeaderComponent={
+          <View className="flex-row justify-between items-center mb-6">
+            <Text className="text-3xl font-bold text-text-primary">Notes</Text>
+            {loading && <ActivityIndicator color="#00e5c8" />}
+
+            <TouchableOpacity
+              className="bg-card px-4 py-2 rounded-xl"
+              onPress={handleLogout}
+            >
+              <Text className="text-text-secondary text-sm font-semibold">
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
+        }
         ListEmptyComponent={
-          <View className="flex-1 items-center justify-center mt-20">
-            <Text className="text-gray-400 text-lg">No notes yet</Text>
-            <Text className="text-gray-300 text-sm mt-2">
+          <View className="flex-1 items-center justify-center mt-24">
+            <Text className="text-text-secondary text-lg mb-2">
+              No notes yet
+            </Text>
+            <Text className="text-text-muted text-sm">
               Tap + to create your first note
             </Text>
           </View>
         }
         renderItem={({ item }) => (
-          <View className="bg-gray-50 rounded-xl p-4 mb-3 border border-gray-100">
-            <Text className="text-lg font-semibold text-gray-800 mb-1">
+          <TouchableOpacity className="bg-card rounded-2xl p-4 mb-3 border border-border">
+            <Text className="text-text-primary text-base font-semibold mb-1">
               {item.title}
             </Text>
-            <Text className="text-gray-500 text-sm" numberOfLines={2}>
+            <Text className="text-text-secondary text-sm" numberOfLines={2}>
               {item.content}
             </Text>
-          </View>
+            <Text className="text-text-muted text-xs mt-2">
+              {new Date(item.createdAt).toLocaleDateString()}
+            </Text>
+          </TouchableOpacity>
         )}
       />
       <TouchableOpacity
-        className="absolute bottom-8 right-6 bg-[#2E3A8C] w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        onPress={() => router.push("/(notes)/create" as Href)}
+        className="absolute bottom-8 right-6 bg-accent w-14 h-14 rounded-full items-center justify-center"
+        style={{
+          shadowColor: "#00e5c8",
+          shadowOpacity: 0.4,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 4 },
+        }}
+        onPress={() => router.push("/(notes)/create")}
       >
-        <Text className="text-white text-3xl font-light">+</Text>
+        <Text className="text-background text-3xl font-light">+</Text>
       </TouchableOpacity>
     </View>
   );
