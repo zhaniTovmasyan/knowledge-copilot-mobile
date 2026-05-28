@@ -1,6 +1,13 @@
 import { useState, useCallback } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Href, router, useFocusEffect } from "expo-router";
 import api from "../services/api";
 import { useAuthStore } from "../store/authStore";
 
@@ -9,6 +16,7 @@ interface Note {
   title: string;
   content: string;
   createdAt: string;
+  summary: string | null;
 }
 
 export default function NotesScreen() {
@@ -19,7 +27,6 @@ export default function NotesScreen() {
   useFocusEffect(
     useCallback(() => {
       if (token) {
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         fetchNotes();
       }
     }, [token])
@@ -48,6 +55,8 @@ export default function NotesScreen() {
         data={notes}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 16, paddingTop: 60 }}
+        refreshing={loading}
+        onRefresh={fetchNotes}
         ListHeaderComponent={
           <View className="flex-row justify-between items-center mb-6">
             <Text className="text-3xl font-bold text-text-primary">Notes</Text>
@@ -74,13 +83,27 @@ export default function NotesScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity className="bg-card rounded-2xl p-4 mb-3 border border-border">
+          <TouchableOpacity
+            className="bg-card rounded-2xl p-4 mb-3 border border-border"
+            onPress={() => router.push(`/(notes)/${item.id}` as Href)}
+          >
             <Text className="text-text-primary text-base font-semibold mb-1">
               {item.title}
             </Text>
-            <Text className="text-text-secondary text-sm" numberOfLines={2}>
-              {item.content}
-            </Text>
+            {item.summary ? (
+              <View className="mb-2">
+                <Text className="text-accent text-xs font-bold uppercase tracking-widest mb-1">
+                  ✦ AI Summary
+                </Text>
+                <Text className="text-text-secondary text-sm" numberOfLines={2}>
+                  {item.summary}
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-text-secondary text-sm" numberOfLines={2}>
+                {item.content}
+              </Text>
+            )}
             <Text className="text-text-muted text-xs mt-2">
               {new Date(item.createdAt).toLocaleDateString()}
             </Text>

@@ -18,7 +18,6 @@ export default function CreateNoteScreen() {
 
     try {
       setLoading(true);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       await api.post("/notes", { title, content });
       router.back();
     } catch (error) {
