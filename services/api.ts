@@ -17,12 +17,12 @@ api.interceptors.response.use(
   }
 );
 
-export const setAuthToken = (token: string) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-};
-
-export const clearAuthToken = () => {
-  delete api.defaults.headers.common["Authorization"];
-};
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default api;

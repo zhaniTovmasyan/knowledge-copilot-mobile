@@ -24,6 +24,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(notes)/create" />
+      <Stack.Screen name="(notes)/[id]" />
     </Stack>
   );
 }
